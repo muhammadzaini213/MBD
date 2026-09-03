@@ -2,12 +2,17 @@ const router = require("express").Router();
 const { call } = require("../db");
 const { verifyToken, requireRole } = require("../middleware/auth");
 
-router.get("/", async (req, res, next) => {
-  try {
-    const out = await call("sp_get_all_users");
-    res.json(out.p_result);
-  } catch (err) { next(err); }
-});
+router.get(
+  "/",
+  verifyToken,
+  requireRole("admin"),
+  async (req, res, next) => {
+    try {
+      const out = await call("sp_get_all_users");
+      res.json(out.p_result);
+    } catch (err) { next(err); }
+  }
+);
 
 router.patch(
   "/:id/role",
