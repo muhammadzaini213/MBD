@@ -109,6 +109,68 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE PROCEDURE sp_create_password_reset(
+  p_email VARCHAR(100),
+  p_token_hash TEXT,
+  p_expires_at TIMESTAMPTZ,
+  OUT p_result JSON
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id UUID;
+BEGIN
+  SELECT id INTO v_user_id FROM users WHERE email = p_email AND is_active = TRUE;
+
+  IF NOT FOUND THEN
+    p_result := NULL; 
+    RETURN;
+  END IF;
+
+  INSERT INTO password_reset_tokens (user_id, token_hash, expires_at)
+  VALUES (v_user_id, p_token_hash, p_expires_at);
+
+  SELECT json_build_object('user_id', v_user_id) INTO p_result;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE sp_reset_password(
+  p_token_hash TEXT,
+  p_new_password_hash TEXT,
+  OUT p_result JSON
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_token password_reset_tokens%ROWTYPE;
+BEGIN
+  SELECT * INTO v_token
+  FROM password_reset_tokens
+  WHERE token_hash = p_token_hash
+    AND used_at IS NULL
+    AND expires_at > now();
+
+  IF NOT FOUND THEN
+    p_result := NULL;
+    RETURN;
+  END IF;
+
+  UPDATE users
+  SET password_hash = p_new_password_hash, updated_at = now()
+  WHERE id = v_token.user_id;
+
+  UPDATE password_reset_tokens
+  SET used_at = now()
+  WHERE id = v_token.id;
+
+  SELECT json_build_object('user_id', v_token.user_id) INTO p_result;
+END;
+$$;
+
 
 CREATE OR REPLACE PROCEDURE sp_upgrade_user_role(
   p_user_id UUID,

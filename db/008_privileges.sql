@@ -29,8 +29,13 @@ GRANT EXECUTE ON PROCEDURE sp_get_delivery_history(UUID) TO app_user;
 GRANT EXECUTE ON PROCEDURE sp_get_webhook_stats(UUID) TO app_user;
 GRANT EXECUTE ON PROCEDURE sp_get_all_users() TO app_user;
 
+
 GRANT EXECUTE ON PROCEDURE sp_register_user(VARCHAR, VARCHAR, TEXT) TO app_user;
 GRANT EXECUTE ON PROCEDURE sp_login_user(VARCHAR) TO app_user;
+
+GRANT EXECUTE ON PROCEDURE sp_create_password_reset(VARCHAR, TEXT, TIMESTAMPTZ) TO app_user;
+GRANT EXECUTE ON PROCEDURE sp_reset_password(TEXT, TEXT) TO app_user;
+
 GRANT EXECUTE ON PROCEDURE sp_upgrade_user_role(UUID, VARCHAR) TO app_user;
 
 GRANT EXECUTE ON FUNCTION fn_success_rate(UUID) TO app_user;
