@@ -6,7 +6,7 @@ const deliveries = require("./routes/deliveries");
 const stats = require("./routes/stats");
 const health = require("./routes/health");
 const users = require("./routes/users");
-const login = require("./routes/auth"); 
+const login = require("./routes/auth");
 
 const app = express();
 app.use(express.json({ limit: "256kb" }));
@@ -32,5 +32,9 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500).json({ error: err.message || "Internal server error" });
 });
 
-const port = Number(process.env.PORT || 3000);
-app.listen(port, () => console.log(`API listening on :${port}`));
+if (require.main === module) {
+  const port = Number(process.env.PORT || 3000);
+  app.listen(port, () => console.log(`API listening on :${port}`));
+}
+
+module.exports = app;

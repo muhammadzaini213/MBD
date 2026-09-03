@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { call } = require("../db");
-const { verifyToken } = require("../middleware/auth");
+const { verifyToken, requireRole } = require("../middleware/auth");
 
 function asHttpError(err) {
   if (err.code === "P0002") err.status = 404;
@@ -9,7 +9,7 @@ function asHttpError(err) {
   else if (err.code === "42501") err.status = 403;
 }
 
-router.post("/", verifyToken, async (req, res, next) => {
+router.post("/", verifyToken, requireRole("operator"), async (req, res, next) => {
   try {
     const { name, webhook_url, channel_name, config } = req.body;
     const out = await call("sp_create_webhook", [
