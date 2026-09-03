@@ -2,8 +2,9 @@ GRANT CONNECT ON DATABASE webhook_manager TO app_user, webhook_readonly;
 GRANT USAGE ON SCHEMA public TO app_user, webhook_readonly;
 
 
-GRANT SELECT ON users TO app_user;
-REVOKE INSERT, UPDATE, DELETE ON users FROM app_user;
+GRANT SELECT, UPDATE ON users TO app_user;
+
+REVOKE INSERT, DELETE ON users FROM app_user;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON webhooks TO app_user;
 

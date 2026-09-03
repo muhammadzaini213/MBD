@@ -9,7 +9,7 @@ function asHttpError(err) {
   else if (err.code === "42501") err.status = 403;
 }
 
-router.post("/", verifyToken, requireRole("operator"), async (req, res, next) => {
+router.post("/", verifyToken, requireRole("operator", "admin"), async (req, res, next) => {
   try {
     const { name, webhook_url, channel_name, config } = req.body;
     const out = await call("sp_create_webhook", [

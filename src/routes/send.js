@@ -7,7 +7,7 @@ function asHttpError(err) {
   else if (err.code === "P0001") err.status = 400;
 }
 
-router.post("/:id/send", verifyToken, requireRole("operator"), async (req, res, next) => {
+router.post("/:id/send", verifyToken, requireRole("operator", "admin"), async (req, res, next) => {
   try {
     const payload = JSON.stringify(req.body || { content: "Test webhook" });
 

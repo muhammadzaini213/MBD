@@ -30,6 +30,10 @@ BEGIN
     RAISE EXCEPTION 'webhook_url wajib diisi' USING ERRCODE = '23502';
   END IF;
 
+  IF EXISTS (SELECT 1 FROM webhooks WHERE webhook_url = p_webhook_url) THEN
+    RAISE EXCEPTION 'webhook_url sudah digunakan' USING ERRCODE = '23505';
+  END IF;
+
   INSERT INTO webhooks (user_id, name, webhook_url, channel_name, config)
   VALUES (p_user_id, p_name, p_webhook_url, p_channel_name, COALESCE(p_config, '{}'))
   RETURNING id INTO new_id;
@@ -178,6 +182,8 @@ CREATE OR REPLACE PROCEDURE sp_upgrade_user_role(
   OUT p_result JSON
 )
 LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
 AS $$
 DECLARE
   v_user users%ROWTYPE;

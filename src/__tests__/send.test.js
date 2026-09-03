@@ -45,13 +45,14 @@ describe("Send Route", () => {
       expect(res.body.error).toBe("Insufficient permissions");
     });
 
-    test("returns 403 for admin role", async () => {
+    test("returns 201 for admin role", async () => {
+      pool.query.mockResolvedValue({ rows: [{ p_result: { id: 1, status: "sent" } }] });
       const token = signToken("admin");
       const res = await request(app)
         .post("/api/send/1/send")
         .set("Authorization", `Bearer ${token}`)
         .send({ content: "Hello" });
-      expect(res.status).toBe(403);
+      expect(res.status).toBe(201);
     });
 
     test("returns 201 for operator role", async () => {
