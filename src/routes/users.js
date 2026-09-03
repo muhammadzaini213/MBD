@@ -9,7 +9,8 @@ router.get(
   async (req, res, next) => {
     try {
       const out = await call("sp_get_all_users");
-      res.json(out.p_result);
+      const users = out.p_result.map(({ password_hash, ...rest }) => rest);
+      res.json(users);
     } catch (err) { next(err); }
   }
 );
@@ -32,7 +33,8 @@ router.patch(
         return res.status(404).json({ error: "User not found" });
       }
 
-      res.json(out.p_result);
+      const { password_hash, ...user } = out.p_result;
+      res.json(user);
     } catch (err) {
       next(err);
     }

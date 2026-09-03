@@ -1,6 +1,6 @@
 {
   "name": "discord-webhook-manager",
-  "version": "1.0.0",
+  "vezrsion": "1.0.0",
   "private": true,
   "description": "REST API Express.js + PostgreSQL untuk manajemen Discord Webhook",
   "main": "src/app.js",

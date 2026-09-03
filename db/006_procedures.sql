@@ -401,7 +401,7 @@ BEGIN
   SELECT COALESCE(json_agg(u ORDER BY u.created_at DESC), '[]'::json)
   INTO p_result
   FROM (
-    SELECT id, username, email, password_hash, role, created_at FROM users
+    SELECT id, username, email, role, created_at FROM users
   ) u;
 END;
 $$;
